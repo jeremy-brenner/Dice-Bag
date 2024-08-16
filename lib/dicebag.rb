@@ -109,7 +109,7 @@ module DiceBag
       normalize_reroll hash
       normalize_explode_indefinite hash
       normalize_drop_keep hash
-      normalize_target hash
+      normalize_targets hash
       normalize_failure hash
     end
 
@@ -197,16 +197,12 @@ module DiceBag
   # the dice sides and greater than 0,
   # otherwise, set it to 0 (aka no target
   # number) and add a note.
-  def self.normalize_target(hash)
-    return unless hash[:options].key? :target
+  def self.normalize_targets(hash)
+    return unless hash[:options].key? :targets
 
-    target = hash[:options][:target]
+    targets = hash[:options][:targets]
 
-    return if target >= 0 && target <= hash[:sides]
-
-    hash[:options][:target] = 0
-
-    hash[:notes].push 'Target number too large or is negative; reset to 0.'
+    hash[:options][:targets] = targets.select{ |target| target >= 0 && target <= hash[:sides] }
   end
 
   # This is the wrapper for the parse, transform,
