@@ -192,17 +192,24 @@ module DiceBag
     hash[:notes].push 'Failure number too large or is negative; reset to 0.'
   end
 
-  # Finally, if we have a target number,
-  # make sure it is equal to or less than
+  # Finally, if we have target numbers
+  # make sure they are equal to or less than
   # the dice sides and greater than 0,
-  # otherwise, set it to 0 (aka no target
-  # number) and add a note.
+  # otherwise, drop it.
   def self.normalize_targets(hash)
     return unless hash[:options].key? :targets
 
-    targets = hash[:options][:targets]
+    targets = []
 
-    hash[:options][:targets] = targets.select{ |target| target >= 0 && target <= hash[:sides] }
+    hash[:options][:targets].each do |target|    
+      if target >= 0 && target <= hash[:sides]
+        targets.push target
+      else
+        hash[:notes].push "Target number (#{target}) too large or less than 1; removed."
+      end
+    end
+  
+    hash[:options][:targets] = targets
   end
 
   # This is the wrapper for the parse, transform,
